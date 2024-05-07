@@ -1,0 +1,4 @@
+repository "SMOOTA@drkusachki@cloud"
+  path "/"
+    br "/main"
+    co "/main"
