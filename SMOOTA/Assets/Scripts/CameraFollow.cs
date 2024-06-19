@@ -6,6 +6,7 @@ public class CameraFollow : MonoBehaviour
 {
     public float Followspeed = 2f;
     public Transform target;
+    [SerializeField] bool verticalMovement = false;
 
     void Start()
     {
@@ -15,7 +16,7 @@ public class CameraFollow : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Vector3 newPos = new Vector3(target.position.x, target.position.y, -10f);
+        Vector3 newPos = new(target.position.x, verticalMovement ? target.position.y : transform.position.y, -10f);
         transform.position = Vector3.Slerp(transform.position, newPos, Followspeed * Time.deltaTime);
     }
 }

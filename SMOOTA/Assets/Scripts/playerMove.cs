@@ -4,19 +4,24 @@ using UnityEngine;
 
 public class playerMove : MonoBehaviour
 {
+	[Header("Moving")]
 	[SerializeField] float moveSpeed = 5f;
-	[SerializeField] float jumpStrength = 5f;
 	[SerializeField] public float moveMod = 1f;
-	[SerializeField] public float jumpMod = 1f;
+	[Header("Dash")]
 	[SerializeField] public float dashDistance = 5f;
-	[SerializeField] Animator animator;
+	[SerializeField] float dashTime = 0f;
+	[Header("Jump")]
+	[SerializeField] float jumpStrength = 5f;
+	[SerializeField] public float jumpMod = 1f;
+	[SerializeField] public Animator animator;
 	[HideInInspector] static public playerMove player;
 	public enum states
 	{
 		standing,
 		jumping,
 		dashing,
-		running
+		running,
+		attacking
 	}
 	public enum direction : int
 	{
@@ -26,7 +31,7 @@ public class playerMove : MonoBehaviour
 	[HideInInspector] public direction dir = direction.right;
 	[HideInInspector] public states state = states.dashing;
 	Rigidbody2D rb;
-	bool isGrounded = false;
+	[HideInInspector] public bool isGrounded = false;
 	bool isWalled = false;
 
 	private void Start()
@@ -35,100 +40,69 @@ public class playerMove : MonoBehaviour
 		rb = this.GetComponent<Rigidbody2D>();
 	}
 
-	private void Update()
+	public int Facing()
+    {
+		return (int)dir;
+    }
+
+	private void Mirror()
 	{
-		if (rb.velocity.magnitude > 0.001f && state != states.dashing)
-		{
-			if (!isGrounded)
-				animator.SetBool("IsFalling", true);
-			else if (state == states.running)
-				animator.SetBool("IsWalking", true);
-		}
-		else
-		{
-			animator.SetBool("IsWalking", false);
-			animator.SetBool("IsFalling", false);
-		} 
-		if (Input.GetKeyDown("space") && state != states.dashing && isGrounded)
-			jump();
-
-		if (state != states.dashing)
-			move();
-
-		if (rb.velocity.magnitude < 0.001f && state != states.dashing)
-			state = states.standing;
-
-		if (Input.GetKeyDown(KeyCode.LeftShift) && isGrounded)
-		{
-			StartCoroutine(dash());
-		}
-		mirror();
+		gameObject.GetComponent<SpriteRenderer>().flipX = dir <= 0;
 	}
 
-	private void mirror()
+	public void Move()
 	{
-		gameObject.GetComponent<SpriteRenderer>().flipX = dir > 0 ? false : true;
+		rb.velocity = Input.GetAxisRaw("Horizontal") * moveMod * moveSpeed * Vector2.right + Vector2.up * rb.velocity.y;
+		dir = Input.GetAxisRaw("Horizontal") == 0 ? dir : (direction)Input.GetAxisRaw("Horizontal");
+		Mirror();
 	}
 
-	private void move()
+	public void Jump()
 	{
-		rb.velocity = Vector2.right * Input.GetAxisRaw("Horizontal") * moveSpeed * moveMod + Vector2.up * rb.velocity.y;
-		if (Input.GetAxisRaw("Horizontal") == 1)
-			dir = direction.right;
-		else if (Input.GetAxisRaw("Horizontal") == -1)
-			dir = direction.left;
-		if(Input.GetAxisRaw("Horizontal") != 0)
-			state = states.running;
+		rb.AddForce(jumpMod * jumpStrength * Vector3.up, ForceMode2D.Impulse);
 	}
-
-	private void jump()
-	{
-		rb.AddForce(Vector3.up * jumpStrength * jumpMod, ForceMode2D.Impulse); 
-	}
-
 
 	private void OnCollisionEnter2D(Collision2D collision)
 	{
-		if (collision.gameObject.tag == "Ground")
+		if (collision.gameObject.CompareTag("Ground"))
 			isGrounded = true;
 		
-		if (collision.gameObject.tag == "Wall")
+		if (collision.gameObject.CompareTag("Wall"))
 			isWalled = true;
 	}
 
 	private void OnCollisionExit2D(Collision2D collision)
 	{
-		if (collision.gameObject.tag == "Ground")
+		if (collision.gameObject.CompareTag("Ground"))
 			isGrounded = false;
 	
-		if (collision.gameObject.tag == "Wall")
+		if (collision.gameObject.CompareTag("Wall"))
 			isWalled = false;
 	}
 
-	IEnumerator dash()
+	public IEnumerator Dash()
 	{
 		LayerMask lm = gameObject.layer;
-		state = states.dashing;
-		animator.SetBool("IsDashing", true);
 		gameObject.layer = LayerMask.NameToLayer("Invulnerable");
+;
+		gameObject.GetComponent<BoxCollider2D>().size -= Vector2.up;
+        transform.localPosition -= Vector3.up * .5f;
+		
 		float startpos = transform.position.x;
 		float endpos = transform.position.x + ((int)dir) * dashDistance;
-        transform.localPosition -= Vector3.up * .5f;
-        gameObject.GetComponent<CapsuleCollider2D>().size -= Vector2.up;
- 		for (float f = 0f; f < 1; f += .01f)
+
+		float speed = dashDistance / dashTime;
+		for (float f = 0f; f <= 1 && isGrounded && !isWalled; f += .01f)
 		{
-			if (!isGrounded)
-				break;
-			if (isWalled)
-				break;
-			transform.position = Vector3.right * Mathf.Lerp(startpos, endpos, f) + Vector3.up * transform.position.y;
-			yield return new WaitForSeconds((dashDistance / 100) * .0075f);
+			transform.position += (int)dir * dashDistance * Vector3.right / 100f;
+			yield return new WaitForSeconds(dashTime / 100f);
 		}
-		gameObject.GetComponent<CapsuleCollider2D>().size += Vector2.up;
+		rb.velocity = Vector2.zero;
+		
+		gameObject.GetComponent<BoxCollider2D>().size += Vector2.up;
         transform.localPosition += Vector3.up * .5f;
-        gameObject.layer = lm;
-		state = states.standing;
-		animator.SetBool("IsDashing", false);
+        
+		gameObject.layer = lm;
 		yield return null;
 	}
 }

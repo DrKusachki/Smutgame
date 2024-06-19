@@ -250,12 +250,12 @@ namespace UnityEditor.Tilemaps
             int right = horizontalCount;
             Vector3[] cellOffset =
             {
-                Grid.Swizzle(gridLayout.cellSwizzle, new Vector3(0, gridLayout.cellSize.y / 2, area.zMin)),
-                Grid.Swizzle(gridLayout.cellSwizzle, new Vector3(gridLayout.cellSize.x / 2, gridLayout.cellSize.y / 4, area.zMin)),
-                Grid.Swizzle(gridLayout.cellSwizzle, new Vector3(gridLayout.cellSize.x / 2, -gridLayout.cellSize.y / 4, area.zMin)),
-                Grid.Swizzle(gridLayout.cellSwizzle, new Vector3(0, -gridLayout.cellSize.y / 2, area.zMin)),
-                Grid.Swizzle(gridLayout.cellSwizzle, new Vector3(-gridLayout.cellSize.x / 2, -gridLayout.cellSize.y / 4, area.zMin)),
-                Grid.Swizzle(gridLayout.cellSwizzle, new Vector3(-gridLayout.cellSize.x / 2, gridLayout.cellSize.y / 4, area.zMin))
+                Grid.Swizzle(gridLayout.cellSwizzle, new Vector3(0, gridLayout.cellSize.y / 2, 0)),
+                Grid.Swizzle(gridLayout.cellSwizzle, new Vector3(gridLayout.cellSize.x / 2, gridLayout.cellSize.y / 4, 0)),
+                Grid.Swizzle(gridLayout.cellSwizzle, new Vector3(gridLayout.cellSize.x / 2, -gridLayout.cellSize.y / 4, 0)),
+                Grid.Swizzle(gridLayout.cellSwizzle, new Vector3(0, -gridLayout.cellSize.y / 2, 0)),
+                Grid.Swizzle(gridLayout.cellSwizzle, new Vector3(-gridLayout.cellSize.x / 2, -gridLayout.cellSize.y / 4, 0)),
+                Grid.Swizzle(gridLayout.cellSwizzle, new Vector3(-gridLayout.cellSize.x / 2, gridLayout.cellSize.y / 4, 0))
             };
             // Fill Top and Bottom Vertices
             for (int x = area.min.x; x < area.max.x; x++)
@@ -352,10 +352,10 @@ namespace UnityEditor.Tilemaps
                 case GridLayout.CellLayout.Isometric:
                 case GridLayout.CellLayout.IsometricZAsY:
                 case GridLayout.CellLayout.Rectangle:
-                    int min = k_GridGizmoVertexCount / -32;
-                    int max = min * -1;
-                    int numCells = max - min;
-                    RectInt bounds = new RectInt(min, min, numCells, numCells);
+                    var min = k_GridGizmoVertexCount / -32;
+                    var max = min * -1;
+                    var numCells = max - min;
+                    var bounds = new RectInt(min, min, numCells, numCells);
 
                     return GenerateCachedGridMesh(gridLayout, color, 0f, bounds, MeshTopology.Lines);
             }

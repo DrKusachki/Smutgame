@@ -9,7 +9,6 @@ public class PlayerData
     public int souls;
     public int solidsouls;
     public Vector3 position;
-
 }
 
 public class SaveLoad : MonoBehaviour
@@ -18,13 +17,12 @@ public class SaveLoad : MonoBehaviour
     string saveFilePath;
     void Start()
     {
-    playerData = new PlayerData();
-    playerData.health = 100;
-    playerData.souls = 5;
+        playerData = new PlayerData();
+        playerData.health = 100;
+        playerData.souls = 5;
         playerData.solidsouls = 3;
-    playerData.position = Vector3.zero;
-    saveFilePath = Application.persistentDataPath + "/PlayerData.json";
-
+        playerData.position = Vector3.zero;
+        saveFilePath = Application.persistentDataPath + "/PlayerData.json";
     }
     void Update()
     {
@@ -42,8 +40,10 @@ public class SaveLoad : MonoBehaviour
         {
             string loadPlayerData = File.ReadAllText(saveFilePath);
             playerData = JsonUtility.FromJson<PlayerData>(loadPlayerData);
-            Debug.Log("Load game complete! \nPlayer health:" + playerData.health + ", Player souls:" + playerData.souls + ", Player solidsouls:" + playerData.solidsouls + ", Player Position:" + playerData.position);
-
+            Debug.Log("Load game complete! \nPlayer health:" + playerData.health + 
+                ", Player souls:" + playerData.souls + 
+                ", Player solidsouls:" + playerData.solidsouls + 
+                ", Player Position:" + playerData.position);
         }
         else
         {
@@ -55,11 +55,11 @@ public class SaveLoad : MonoBehaviour
         if (!File.Exists(saveFilePath))
         {
             File.Delete(saveFilePath);
-            Debug.Log("YOU DELETED YOUR SAVE, NOW FACE YOUR DOOM");
+            Debug.Log("YOU HAVE DELETED YOUR SAVE, NOW FACE YOUR DOOM");
         }
         else
         {
-            Debug.Log("YOU CAN'T DELETE SOMETHING, WHICH NOT EXIST");
+            Debug.Log("YOU CAN'T DELETE SOMETHING THAT DOES NOT EXIST");
         }
     }
     // Update is called once per frame

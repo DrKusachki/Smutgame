@@ -9,4 +9,5 @@ public class playerStats : ScriptableObject
     public float mana = 5f;
 
     public float baseDamage = 15f;
+    public float attackSpeed = .4f;
 }

@@ -11,6 +11,10 @@ public class attack : MonoBehaviour
         StartCoroutine(delete());
     }
 
+    public void setDamage(float dmg)
+    {
+        damage = dmg;
+    }
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
@@ -24,7 +28,7 @@ public class attack : MonoBehaviour
 
     IEnumerator delete()
     {
-        yield return new WaitForSeconds(.2f);
+        yield return new WaitForSeconds(FindObjectOfType<playerMain>().stats.attackSpeed);
         Destroy(gameObject);
         yield return null;
     }
