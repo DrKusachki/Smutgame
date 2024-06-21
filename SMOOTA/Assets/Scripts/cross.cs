@@ -16,27 +16,28 @@ public class cross : MonoBehaviour
             {
                 crossSprite = sr;
             }
-            else
+            else if(sr.gameObject.name == "mask")
             {
                 mask = sr;
             }
         }
         mask.enabled = false;
         crossSprite.enabled = true;
-
     }
 
     // Update is called once per frame
     void Update()
     {
         float dist = Vector3.Distance(this.transform.position, playerMain.Player.transform.position);
-        if (dist < 2f && Input.GetKey(KeyCode.E))
+        if (dist < 2f)
         {
             mask.enabled = true;
-            crossSprite.enabled = false;
-            FindObjectOfType<SaveLoad>().SaveGame();
-            
-
+            if (Input.GetKey(KeyCode.E))
+            {
+                FindObjectOfType<SaveLoad>().SaveGame();
+            }
         }
+        else
+            mask.enabled = false;
     }
 }
