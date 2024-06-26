@@ -57,6 +57,7 @@ public class playerMain : MonoBehaviour
 				if (Input.GetAxis("Fire1") != 0)
 					state = states.attacking;
 				break;
+
 			case states.running:
 				pm.Move();
 				pm.animator.SetBool("IsWalking", true);
@@ -79,6 +80,7 @@ public class playerMain : MonoBehaviour
 				if (Input.GetAxis("Fire1") != 0)
 					state = states.attacking;
 				break;
+
 			case states.dashing:
 				if (!isDashing)
 				{
@@ -86,6 +88,7 @@ public class playerMain : MonoBehaviour
 					isDashing = true;
 				}
 				break;
+
 			case states.jumping:
 				if (pm.isGrounded && justJumped)
 				{
@@ -113,6 +116,7 @@ public class playerMain : MonoBehaviour
 					state = states.attacking;
 				}
 				break;
+
 			case states.attacking:
 				if (!isAttacking)
 				{
@@ -155,7 +159,9 @@ public class playerMain : MonoBehaviour
 		var pa = GetComponent<playerAttack>();
 		if (Input.GetAxis("Vertical") > 0)
 		{
+			pm.animator.SetBool("HoldingUp", true);
 			pa.attack(new(pm.Facing(), 1));
+			Debug.Log("Attacked up!");
 		}
 		else
 		{
@@ -163,6 +169,7 @@ public class playerMain : MonoBehaviour
 		}
 		yield return new WaitForSeconds(stats.attackSpeed);
 		pm.animator.SetBool("IsAttacking", false);
+		pm.animator.SetBool("HoldingUp", false);
 		isAttacking = false;
 		state = pm.isGrounded ? states.standing : states.jumping; 
 		yield return null;
