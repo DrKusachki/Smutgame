@@ -120,6 +120,7 @@ public class playerMain : MonoBehaviour
 			case states.attacking:
 				if (!isAttacking)
 				{
+					pm.animator.SetBool("IsWalking", false);
 					cr = Attack(pm.isGrounded);
 					StartCoroutine(cr);
 					if (pm.isGrounded) GetComponent<Rigidbody2D>().velocity = Vector3.zero;
