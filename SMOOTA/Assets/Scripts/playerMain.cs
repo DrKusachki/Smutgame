@@ -111,9 +111,9 @@ public class playerMain : MonoBehaviour
 				}
 				if (Input.GetAxis("Fire1") != 0f)
 				{
+					state = states.attacking;
 					pm.animator.SetBool("IsFalling", false);
 					pm.animator.SetBool("IsJumping", false);
-					state = states.attacking;
 				}
 				break;
 
@@ -137,6 +137,10 @@ public class playerMain : MonoBehaviour
 					{
 						state = states.standing;
 					}
+				}
+				else if (!pm.isGrounded)
+				{
+					pm.Move();
 				}
 				break;
 		}

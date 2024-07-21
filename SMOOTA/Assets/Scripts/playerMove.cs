@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class playerMove : MonoBehaviour
@@ -31,8 +32,9 @@ public class playerMove : MonoBehaviour
 	[HideInInspector] public direction dir = direction.right;
 	[HideInInspector] public states state = states.dashing;
 	Rigidbody2D rb;
-	[HideInInspector] public bool isGrounded = false;
+	[HideInInspector] public bool isGrounded => GetComponentInChildren<playerGroundedCheck>().isGrounded;
 	bool isWalled = false;
+
 
 	private void Start()
 	{
@@ -62,20 +64,14 @@ public class playerMove : MonoBehaviour
 		rb.AddForce(jumpMod * jumpStrength * Vector3.up, ForceMode2D.Impulse);
 	}
 
-	private void OnCollisionEnter2D(Collision2D collision)
+	private void OnCollisionStay2D(Collision2D collision)
 	{
-		if (collision.gameObject.CompareTag("Ground"))
-			isGrounded = true;
-		
 		if (collision.gameObject.CompareTag("Wall"))
 			isWalled = true;
 	}
 
 	private void OnCollisionExit2D(Collision2D collision)
 	{
-		if (collision.gameObject.CompareTag("Ground"))
-			isGrounded = false;
-	
 		if (collision.gameObject.CompareTag("Wall"))
 			isWalled = false;
 	}
