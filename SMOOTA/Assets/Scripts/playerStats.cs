@@ -10,4 +10,9 @@ public class playerStats : ScriptableObject
 
     public float baseDamage = 15f;
     public float attackSpeed = .4f;
+
+    public float souls = 0f;
+    public float soulsPersistent = 0f;
+
+    public Vector3 playerPosition = Vector3.zero;
 }

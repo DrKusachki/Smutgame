@@ -382,12 +382,14 @@
 "Assets/Scripts/CameraFollow.cs"
 "Assets/Scripts/cross.cs"
 "Assets/Scripts/IDamageable.cs"
+"Assets/Scripts/platform.cs"
 "Assets/Scripts/playerAttack.cs"
 "Assets/Scripts/playerGroundedCheck.cs"
 "Assets/Scripts/playerMain.cs"
 "Assets/Scripts/playerMove.cs"
 "Assets/Scripts/playerStats.cs"
 "Assets/Scripts/SaveLoad.cs"
+"Assets/Scripts/wallShaper.cs"
 -langversion:9.0
 /deterministic
 /optimize+

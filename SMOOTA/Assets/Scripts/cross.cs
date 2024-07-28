@@ -5,6 +5,7 @@ using UnityEngine;
 public class cross : MonoBehaviour
 {
     SpriteRenderer mask;
+    private float dist => Vector3.Distance(this.transform.position, playerMain.Player.transform.position);
 
     void Start()
     {
@@ -15,13 +16,17 @@ public class cross : MonoBehaviour
 
     void Update()
     {
-        float dist = Vector3.Distance(this.transform.position, playerMain.Player.transform.position);
         if (dist < 2f)
         {
             mask.enabled = true;
-            if (Input.GetKey(KeyCode.E))
+            if (Input.GetKeyDown(KeyCode.E))
             {
+                Debug.Log(Application.persistentDataPath);
                 FindObjectOfType<SaveLoad>().SaveGame();
+            }
+            else if (Input.GetKeyDown(KeyCode.F))
+            {
+                FindObjectOfType<SaveLoad>().LoadGame();
             }
         }
         else
