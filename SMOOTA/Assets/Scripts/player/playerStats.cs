@@ -10,7 +10,8 @@ public class playerStats : ScriptableObject
 
     public float baseDamage = 15f;
     public float attackSpeed = .4f;
-
+    public float[] meleeAttack; //
+    public float[] rangedAttack; //
     public float souls = 0f;
     public float soulsPersistent = 0f;
 
