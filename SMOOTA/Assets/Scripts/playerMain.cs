@@ -11,7 +11,9 @@ public class playerMain : MonoBehaviour
 		jumping,
 		dashing,
 		running,
-		attacking
+		attacking,
+		falling,
+		parry
 	}
 	public enum direction : int
 	{
@@ -25,10 +27,15 @@ public class playerMain : MonoBehaviour
 	bool wasGrounded = false;
 	bool justJumped = false;
 	bool isDashing = false;
+	bool isParry = false;
 	private IEnumerator cr;
 	bool isAttacking = false;
 
+	
+
 	private states state { get; set; } = states.standing;
+	[SerializeField] private states stateCopy;
+	
 	playerMove pm;
 	private void Start()
 	{
@@ -42,6 +49,7 @@ public class playerMain : MonoBehaviour
 
 	private void Update()
 	{
+		stateCopy = state;
 		switch (state)
 		{
 			case states.standing:
@@ -56,8 +64,11 @@ public class playerMain : MonoBehaviour
 					state = states.dashing;
 				if (Input.GetAxis("Fire1") != 0)
 					state = states.attacking;
+				if (pm.isFalling)
+					state = states.falling;
+				if (Input.GetAxis("Fire2") != 0)
+					state = states.parry;
 				break;
-
 			case states.running:
 				pm.Move();
 				pm.animator.SetBool("IsWalking", true);
@@ -75,10 +86,17 @@ public class playerMain : MonoBehaviour
 				if (Input.GetAxis("Fire3") != 0)
 				{
 					pm.animator.SetBool("IsWalking", false);
+					pm.Stop();
 					state = states.dashing;
 				}
 				if (Input.GetAxis("Fire1") != 0)
 					state = states.attacking;
+				if (Input.GetAxis("Fire2") != 0f)
+				{
+					pm.Stop();
+					pm.animator.SetBool("IsWalking", false);
+					state = states.parry;
+				}
 				break;
 
 			case states.dashing:
@@ -94,29 +112,50 @@ public class playerMain : MonoBehaviour
 				{
 					pm.Jump();
 					justJumped = false;
+					pm.animator.SetBool("IsJumping", true);
 				}
 				if (Input.GetAxis("Horizontal") != 0)
 				{
 					pm.Move();
 				}
 				if (GetComponent<Rigidbody2D>().velocity.y < 0)
+				{
+					pm.animator.SetBool("IsJumping", false);
 					pm.animator.SetBool("IsFalling", true);
+					state = states.falling;
+				}
 				else
-					pm.animator.SetBool("IsJumping", true);
 				if(!wasGrounded && pm.isGrounded)
 				{
-					state = states.standing;
 					pm.animator.SetBool("IsFalling", false);
 					pm.animator.SetBool("IsJumping", false);
+					state = states.standing;
 				}
+				if (Input.GetAxis("Fire1") != 0f)
+				{
+					pm.animator.SetBool("IsFalling", false);
+					pm.animator.SetBool("IsJumping", false);
+					state = states.attacking;
+				}
+				break;
+			case states.falling:
+				if (Input.GetAxis("Horizontal") != 0)
+					pm.Move();
+				pm.animator.SetBool("IsFalling", true);
+
 				if (Input.GetAxis("Fire1") != 0f)
 				{
 					state = states.attacking;
 					pm.animator.SetBool("IsFalling", false);
 					pm.animator.SetBool("IsJumping", false);
 				}
+				
+				if (pm.isGrounded)
+				{
+					pm.animator.SetBool("IsFalling", false);
+					state = states.standing;
+				}
 				break;
-
 			case states.attacking:
 				if (!isAttacking)
 				{
@@ -143,6 +182,13 @@ public class playerMain : MonoBehaviour
 					pm.Move();
 				}
 				break;
+			case states.parry:
+                if (!isParry)
+                {
+	                StartCoroutine(Parry());
+                    isParry = true;
+                }
+			break;
 		}
 		wasGrounded = pm.isGrounded;
 	}
@@ -157,6 +203,13 @@ public class playerMain : MonoBehaviour
 		yield return null;
 	}
 
+	private IEnumerator Parry()
+	{
+		yield return pm.Parry();
+		state = states.standing;
+		isParry = false;
+		yield return null;
+	}
 	private IEnumerator Attack(bool onGround)
 	{
 		isAttacking = true;
@@ -176,7 +229,7 @@ public class playerMain : MonoBehaviour
 		pm.animator.SetBool("IsAttacking", false);
 		pm.animator.SetBool("HoldingUp", false);
 		isAttacking = false;
-		state = pm.isGrounded ? states.standing : states.jumping; 
+		state = pm.isGrounded ? states.standing : states.falling; 
 		yield return null;
 	}
 

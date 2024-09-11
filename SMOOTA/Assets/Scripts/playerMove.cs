@@ -14,6 +14,8 @@ public class playerMove : MonoBehaviour
 	[Header("Jump")]
 	[SerializeField] float jumpStrength = 5f;
 	[SerializeField] public float jumpMod = 1f;
+	[Header("Parry")]
+	[SerializeField] float parryDuration = .4f;
 	[SerializeField] public Animator animator;
 	[HideInInspector] static public playerMove player;
 	public enum states
@@ -33,6 +35,7 @@ public class playerMove : MonoBehaviour
 	[HideInInspector] public states state = states.dashing;
 	Rigidbody2D rb;
 	[HideInInspector] public bool isGrounded => GetComponentInChildren<playerGroundedCheck>().isGrounded;
+	[HideInInspector] public bool isFalling => rb.velocity.y < 0f;
 	bool isWalled = false;
 
 
@@ -58,7 +61,10 @@ public class playerMove : MonoBehaviour
 		dir = Input.GetAxisRaw("Horizontal") == 0 ? dir : (direction)Input.GetAxisRaw("Horizontal");
 		Mirror();
 	}
-
+	public void Stop()
+	{
+		rb.velocity = Vector2.zero;
+	}
 	public void Jump()
 	{
 		rb.AddForce(jumpMod * jumpStrength * Vector3.up, ForceMode2D.Impulse);
@@ -93,11 +99,20 @@ public class playerMove : MonoBehaviour
 			transform.position += (int)dir * dashDistance * Vector3.right / 100f;
 			yield return new WaitForSeconds(dashTime / 100f);
 		}
-		rb.velocity = Vector2.zero;
+		Stop();
 		
 		gameObject.GetComponent<BoxCollider2D>().size += Vector2.up;
         transform.localPosition += Vector3.up * .5f;
         
+		gameObject.layer = lm;
+		yield return null;
+	}
+
+	public IEnumerator Parry()
+	{
+		LayerMask lm = gameObject.layer;
+		gameObject.layer = LayerMask.NameToLayer("Parry");
+		yield return new WaitForSeconds(parryDuration);
 		gameObject.layer = lm;
 		yield return null;
 	}
