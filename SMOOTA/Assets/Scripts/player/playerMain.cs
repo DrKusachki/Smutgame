@@ -4,7 +4,6 @@ using Unity.VisualScripting.Antlr3.Runtime.Misc;
 using UnityEngine;
 public class playerMain : MonoBehaviour
 {
-
 	public enum states
 	{
 		standing,

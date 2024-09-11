@@ -15,3 +15,7 @@ MonoBehaviour:
   health: 100
   mana: 5
   baseDamage: 15
+  attackSpeed: 0.4
+  souls: 0
+  soulsPersistent: 0
+  playerPosition: {x: 0, y: 0, z: 0}

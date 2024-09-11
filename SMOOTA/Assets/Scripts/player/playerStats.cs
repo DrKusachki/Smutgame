@@ -11,7 +11,7 @@ public class playerStats : ScriptableObject
 
     public float baseDamage = 15f;
     public float attackSpeed = .4f;
-    Dictionary<string, float> meleeAttack = new Dictionary<string, float>
+    public Dictionary<string, float> meleeAttack = new Dictionary<string, float>
     {
         {"damage", 2f },
         {"speed", 1f },
@@ -19,7 +19,7 @@ public class playerStats : ScriptableObject
         {"height", 4f },
         {"travelDist",3f }
     };
-    Dictionary<string, float> rangedAttack = new Dictionary<string, float>
+    public Dictionary<string, float> rangedAttack = new Dictionary<string, float>
     {
         {"damage", 2f },
         {"speed", 1f },
